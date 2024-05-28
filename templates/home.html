@@ -5,7 +5,9 @@
         <div class="flex flex-col w-4/5 h-[80vh] justify-start items-center bg-background rounded-xl border border-text overflow-y-auto">
             <div id="search-box" class="flex flex-col justify-center items-center w-full h-36 p-4 gap-4">
                 <input type="text" id="user-to-chat" placeholder="Who you wanna chat with?" class="w-11/12 h-12 border-2 border-text rounded-xl p-2">
-                <button class="w-12 h-12 border-2 border-text rounded-xl hover:bg-secondary" onclick="find_room($('#user-to-chat').val())"></button>
+                <button class="w-12 h-12 border-2 border-text rounded-xl hover:bg-secondary flex justify-center items-center" onclick="find_room($('#user-to-chat').val())">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="2rem" width="2rem" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg>
+                </button>
             </div>
             <table id="rooms" class="w-full border-y-[0.5px] border-text border-collapse">
 
@@ -20,13 +22,13 @@
             <div class="flex flex-col justify-center items-center h-full flex-1 bg-background py-8 px-16 rounded-xl border-2 gap-6 rounded-xl">
             <p>Current Mode</p>
             <select id="mode" class="w-4/5 h-12 bg-text text-center bg-white text-text rounded-xl border-2">
-                <option value="vi">VI to EN</option>
-                <option value="en">EN to VI</option>
+                <option value="vi-en">VI to EN</option>
+                <option value="en-vi">EN to VI</option>
             </select>
             </div>
             <div class="flex justify-center items-center h-full flex-1">
-            <button id="mic-btn" class="w-20 h-20 border-2 rounded-full hover:bg-slate-200">
-                <i class="fa-solid fa-microphone fa-2xl"></i>
+            <button id="mic-btn" class="w-20 h-20 border-2 rounded-full hover:bg-slate-200 flex justify-center items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" height="32" width="24" viewBox="0 0 384 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M192 0C139 0 96 43 96 96V256c0 53 43 96 96 96s96-43 96-96V96c0-53-43-96-96-96zM64 216c0-13.3-10.7-24-24-24s-24 10.7-24 24v40c0 89.1 66.2 162.7 152 174.4V464H120c-13.3 0-24 10.7-24 24s10.7 24 24 24h72 72c13.3 0 24-10.7 24-24s-10.7-24-24-24H216V430.4c85.8-11.7 152-85.3 152-174.4V216c0-13.3-10.7-24-24-24s-24 10.7-24 24v40c0 70.7-57.3 128-128 128s-128-57.3-128-128V216z"/></svg>
             </button>
             </div>
         </div>
@@ -35,7 +37,6 @@
 </div>
 <script src="{{ url_for('static', filename='js/recorder.js') }}"></script>
 <script src="{{ url_for('static', filename='js/socketio.js') }}"></script>
-<script src="{{ url_for('static', filename='js/fontawesome.js') }}"></script>
 <script>
     var socket = io();
     socket.on('connect', function() {
@@ -50,10 +51,12 @@
         success: function(data) {
             console.log(data);
             for (var i=0; i<data.length; i++) {
-                $("#rooms").append("<tr class=\"\"><td class=\"w-full h-16 border-y-[0.5px] border-text flex justify-between items-center p-8 text-text hover:bg-secondary cursor-pointer\">"
+                $("#rooms").append(
+                    "<tr class=\"\"><td class=\"w-full h-16 border-y-[0.5px] border-text flex justify-between items-center p-8 text-text hover:bg-secondary cursor-pointer\" onclick=\"find_room('"+data[i].room_name+"')\">"
                     +"<div class=\"h-fit w-fit\">"+data[i].room_name+"</div>"
                     +"<div class=\"h-fit w-fit text-slate-500 text-sm\">"+data[i].last_message_timestamp+"</div>"
-                    +"</td></tr>")
+                    +"</td></tr>"
+                )
             }
         },
         error: function(error) {
@@ -91,6 +94,7 @@
     }
     function populate_chat(messages) {
         $chat_box = $("#chat-box");
+        $chat_box.empty();
         console.log(messages);
         for (var i=0; i<messages.length; i++) {
             if (messages[i].sender == "") {
