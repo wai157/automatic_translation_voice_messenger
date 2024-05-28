@@ -15,13 +15,21 @@ class RegisterForm(FlaskForm):
             InputRequired(),
             Length(max=16, message="Please provide a valid name"),
             Regexp(
-                "[A-Za-z0-9_.]*$",
-                0,
-                "Usernames must have only letters, numbers, dots, or underscores",
+                regex="[A-Za-z0-9_.]*$",
+                message="Usernames must have only letters, numbers, dots, or underscores",
             ),
         ]
     )
-    password = PasswordField(validators=[InputRequired(), Length(min=8)])
+    password = PasswordField(
+        validators=[
+            InputRequired(),
+            Length(min=8),
+            Regexp(
+                regex="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$",
+                message="Passwords must have at least 8 characters, one uppercase letter, one lowercase letter, one digit, and one special character",
+            ),
+        ]
+    )
     confirm_password = PasswordField(
         validators=[
             InputRequired(),
