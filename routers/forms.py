@@ -15,7 +15,7 @@ class RegisterForm(FlaskForm):
             InputRequired(),
             Length(max=16, message="Please provide a valid name"),
             Regexp(
-                regex="[A-Za-z0-9_.]*$",
+                regex=r"[A-Za-z0-9_.]*$",
                 message="Usernames must have only letters, numbers, dots, or underscores",
             ),
         ]
@@ -25,7 +25,7 @@ class RegisterForm(FlaskForm):
             InputRequired(),
             Length(min=8),
             Regexp(
-                regex="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$",
+                regex=r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$",
                 message="Passwords must have at least 8 characters, one uppercase letter, one lowercase letter, one digit, and one special character",
             ),
         ]

@@ -3,7 +3,8 @@ from flask_bcrypt import Bcrypt
 from flask_login import login_user, LoginManager, logout_user, login_required
 from routers.forms import LoginForm, RegisterForm
 from sqlalchemy.exc import IntegrityError
-from models import db, User
+from models import db, User, Room
+from datetime import datetime
 
 router = Blueprint('authentication', __name__, url_prefix='/auth')
 
@@ -51,6 +52,12 @@ def register():
                 password=bcrypt.generate_password_hash(password),
             )
             db.session.add(new_user)
+            new_room = Room(
+                id = f"{username} {username}",
+                last_message_timestamp = datetime.now()
+            )
+            new_room.users.append(new_user)
+            db.session.add(new_room)
             db.session.commit()
             flash(f"Account Succesfully created", "success")
             return redirect(url_for("authentication.login"))

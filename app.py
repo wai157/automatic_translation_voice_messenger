@@ -8,20 +8,24 @@ def create_app():
     
     from models import db
     from routers.authentication import login_manager, bcrypt
+    from routers.socketio import socketio
     
     db.init_app(app)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+    socketio.init_app(app)
     
     with app.app_context():
         db.create_all()
     
     from routers import authentication
     from routers import home
+    from routers.api import room
     from routers.api import chat_history
     
     app.register_blueprint(authentication.router)
     app.register_blueprint(home.router)
+    app.register_blueprint(room.router)
     app.register_blueprint(chat_history.router)
     
     return app

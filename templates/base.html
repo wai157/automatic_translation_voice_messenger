@@ -30,12 +30,11 @@
     </script>
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/toastr.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/fontawesome.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/toastr.css') }}">
 </head>
-<body class="w-screen min-h-screen h-screen flex flex-col text-text divide-y divide-accent overflow-x-hidden">
+<body class="w-screen min-h-screen h-screen flex flex-col text-text overflow-x-hidden">
     <!-- navbar -->
-    <nav class="flex justify-between w-full h-16 bg-background">
+    <nav class="flex justify-between w-full h-16 bg-background outline outline-1 outline-accent">
     {% if current_user.is_authenticated %}
         <div class="flex items-center p-4 outline outline-1 outline-accent gap-4">
             <i class="fa-solid fa-user"></i>
@@ -53,7 +52,7 @@
     {% endblock %}
 
     <!-- footer -->
-    <footer class="w-full h-20 bg-background text-center pt-2 pb-1 text-text">
+    <footer class="w-full h-20 bg-background text-center pt-2 pb-1 text-text outline outline-1 outline-accent">
         <div class="h-full flex flex-col justify-center gap-2 text-center">
             <a class="self-center" href="https://github.com/wai157/ai_hub" target="_blank">
                 <img class="max-w-6 h-auto" src="{{ url_for('static', filename='/images/github.png') }}" alt="github">

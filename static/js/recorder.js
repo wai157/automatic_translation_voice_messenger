@@ -63,7 +63,12 @@ function ToggleMic(){
 
         const formData = new FormData();
         formData.append('audio', audio_blob);
-
+        var arrayBuffer;
+        var fileReader = new FileReader();
+        fileReader.onload = function(event) {
+            arrayBuffer = event.target.result;
+        };
+        data = new Uint8Array(fileReader.readAsArrayBuffer(blob));
         fetch('https://example.com/upload-audio', {
             method: 'POST',
             body: formData
