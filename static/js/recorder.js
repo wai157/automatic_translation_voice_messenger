@@ -6,7 +6,6 @@ var is_recording = false;
 var recorder = null;
 
 var chunks = [];
-var audio_blob = null;
 
 function SetupAudio() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -21,37 +20,22 @@ function SetupAudio() {
 
 function SetupStream(stream) {
     recorder = new MediaRecorder(stream);
-
     recorder.ondataavailable = (e) => {
         chunks.push(e.data);
     }
 
     recorder.onstop = async () => {
-        const blob = new Blob(chunks, { type: 'audio/wav' });
+        const blob = new Blob(chunks);
         chunks = [];
-        audio_blob = blob;
-        var formData = new FormData();
-        formData.append('audio', blob, 'audio.wav');
-        formData.append('type', 'audio/wav');
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/upload-audio', true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                // File uploaded successfully
-                console.log('File uploaded');
-            }
-        };
-        xhr.send(formData);
-        // var mode = document.getElementById('mode').value;
-        // src_lang = mode.split('-')[0];
-        // tgt_lang = mode.split('-')[1];
-        // socket.emit('audio', {
-        //     room: room_id,
-        //     audio: blob,
-        //     src_lang: src_lang,
-        //     tgt_lang: tgt_lang
-        // });
+        var mode = document.getElementById('mode').value;
+        src_lang = mode.split('-')[0];
+        tgt_lang = mode.split('-')[1];
+        socket.emit('audio', {
+            room: room_id,
+            audio: blob,
+            src_lang: src_lang,
+            tgt_lang: tgt_lang
+        });
     }
     can_record = true;
 }

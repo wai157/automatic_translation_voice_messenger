@@ -15,8 +15,8 @@ def get_rooms():
         response = [
             {
                 "room_id": room["room_id"],
-                "room_name": room["room_id"].replace(f"{current_user.username}", "", 1).strip().replace("  ", " "),
-                "last_message_timestamp": room["last_message_timestamp"].strftime('%a %d %b %Y, %I:%M%p')
+                "room_name": room["room_id"].replace(f"{current_user.username}", "", 1).strip("-"),
+                "last_message_timestamp": room["last_message_timestamp"]
             } for room in response]
         return response
     except Exception as e:
@@ -32,7 +32,7 @@ def find_room():
         if user_to_find is None:
             return "User not found!", 404
         if user_to_find.username == current_user.username:
-            room = Room.query.filter(Room.id == f"{current_user.username} {current_user.username}").first().serialize()
+            room = Room.query.filter(Room.id == f"{current_user.username}-{current_user.username}").first().serialize()
         else:
             rooms_current_user = User.query.filter(User.username == current_user.username).first().rooms
             print(rooms_current_user)
@@ -45,26 +45,19 @@ def find_room():
                 room = matched_room.serialize()
             else:
                 new_room = Room(
-                    id = f"{current_user.username} {user_to_find.username}"
+                    id = f"{current_user.username}-{user_to_find.username}"
                 )
                 db_current_user = User.query.filter(User.username == current_user.username).first()
                 new_room.users.append(db_current_user)
                 new_room.users.append(user_to_find)
                 db.session.add(new_room)
                 room = new_room.serialize()
-                new_message = ChatHistory(
-                    room_id = room["room_id"],
-                    sender = "",
-                    message = "Beginning of chat room",
-                    timestamp = datetime.now()
-                )
-                db.session.add(new_message)
-                new_room.messages.append(new_message)
                 db.session.commit()
-        messages = ChatHistory.query.filter(ChatHistory.room_id == room["room_id"]).all()
+        messages = ChatHistory.query.filter(ChatHistory.room_id == room["room_id"]).order_by(ChatHistory.timestamp).all()
         messages = [message.serialize() for message in messages]
         return {
             "room_id": room["room_id"],
+            "room_name": room["room_id"].replace(f"{current_user.username}", "", 1).strip("-"),
             "messages": messages
         }
     except Exception as e:

@@ -1,5 +1,6 @@
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
+import json
 
 db = SQLAlchemy()
 
@@ -35,7 +36,7 @@ class Room(db.Model):
     def serialize(self):
         return {
             "room_id": self.id,
-            "last_message_timestamp": self.last_message_timestamp,
+            "last_message_timestamp": self.last_message_timestamp.strftime('%a %d %b %Y, %I:%M%p') if self.last_message_timestamp else None,
         }
     
 
@@ -45,14 +46,20 @@ class ChatHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     room_id = db.Column(db.String(36), db.ForeignKey("room.id", onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
     sender = db.Column(db.String(16), db.ForeignKey("user.username", onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
-    message = db.Column(db.String(), nullable=False)
-    timestamp = db.Column(db.DateTime(), nullable=False)
+    original_voice = db.Column(db.String())
+    original_text = db.Column(db.String())
+    translated_voice = db.Column(db.String())
+    translated_text = db.Column(db.String())
+    timestamp = db.Column(db.DateTime())
     
     def serialize(self):
         return {
             "room_id": self.room_id,
             "sender": self.sender,
-            "message": self.message,
-            "timestamp": self.timestamp,
+            "original_voice": json.loads(self.original_voice),
+            "original_text": self.original_text,
+            "translated_voice": json.loads(self.translated_voice),
+            "translated_text": self.translated_text,
+            "timestamp": self.timestamp.strftime('%a %d %b %Y, %I:%M%p'),
         }
     

@@ -53,8 +53,7 @@ def register():
             )
             db.session.add(new_user)
             new_room = Room(
-                id = f"{username} {username}",
-                last_message_timestamp = datetime.now()
+                id = f"{username}-{username}",
             )
             new_room.users.append(new_user)
             db.session.add(new_room)

@@ -21,12 +21,10 @@ def create_app():
     from routers import authentication
     from routers import home
     from routers.api import room
-    from routers.api import chat_history
     
     app.register_blueprint(authentication.router)
     app.register_blueprint(home.router)
     app.register_blueprint(room.router)
-    app.register_blueprint(chat_history.router)
     
     return app
 
