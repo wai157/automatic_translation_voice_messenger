@@ -35,11 +35,8 @@ def find_room():
             room = Room.query.filter(Room.id == f"{current_user.username}-{current_user.username}").first().serialize()
         else:
             rooms_current_user = User.query.filter(User.username == current_user.username).first().rooms
-            print(rooms_current_user)
             rooms_user_to_find = User.query.filter(User.username == user_to_find.username).first().rooms
-            print(rooms_user_to_find)
             matched_rooms = set(rooms_current_user).intersection(set(rooms_user_to_find))
-            print(matched_rooms)
             if matched_rooms:
                 matched_room = matched_rooms.pop()
                 room = matched_room.serialize()

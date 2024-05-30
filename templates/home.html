@@ -2,21 +2,21 @@
 {% block main %}
 <div class="flex w-full h-full divide-x divide-accent">
     <div class="flex flex-1 basis-1/3 justify-center items-center">
-        <div class="flex flex-col w-4/5 h-[80vh] justify-start items-center bg-background rounded-xl border border-text overflow-y-auto">
+        <div class="flex flex-col w-4/5 h-[80vh] justify-start items-center bg-background rounded-xl border border-text divide-y divide-text">
             <div id="search-box" class="flex flex-col justify-center items-center w-full h-36 p-4 gap-4">
                 <input type="text" id="user-to-chat" placeholder="Who you wanna chat with?" class="w-11/12 h-12 border-2 border-text rounded-xl p-2">
                 <button class="w-12 h-12 border-2 border-text rounded-xl hover:bg-secondary flex justify-center items-center" onclick="find_room($('#user-to-chat').val())">
                     <svg xmlns="http://www.w3.org/2000/svg" height="2rem" width="2rem" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg>
                 </button>
             </div>
-            <table id="rooms" class="w-full border-y-[0.5px] border-text border-collapse">
+            <div id="rooms" class="w-full overflow-y-auto" style="-ms-overflow-style: none; scrollbar-width: none;">
 
-            </table>
+            </div>
         </div>
     </div>
     <div class="flex flex-1 basis-2/3 justify-center items-center">
         <div class="flex flex-col w-11/12 h-[80vh] gap-2">
-        <div id="chat-box" class="basis-4/5 h-80 grow p-4 border-2 overflow-y-auto overflow-x-hidden rounded-xl flex flex-col-reverse items-end gap-4">
+        <div id="chat-box" class="basis-4/5 h-80 grow p-4 border-2 overflow-y-auto overflow-x-hidden rounded-xl flex flex-col-reverse items-end gap-4" style="-ms-overflow-style: none; scrollbar-width: none;">
         </div>
         <div class="basis-1/5 flex flex-row justify-between items-center gap-4">
             <div class="flex flex-col justify-center items-center h-full flex-1 bg-background py-8 px-16 rounded-xl border-2 gap-6 rounded-xl">
@@ -52,11 +52,12 @@
         if (data.room_id == room_id) {
             return;
         }
+        $("#"+data.room_id).remove();
         $("#rooms").prepend(
-            "<tr id='"+data.room_id+"' class=\"\"><td class=\"w-full h-16 animate-pulse border-y-[0.5px] border-text flex justify-between items-center p-8 text-text hover:bg-secondary cursor-pointer\" onclick=\"find_room('"+data.room_name+"')\">"
+            "<div id='"+data.room_id+"' class=\"w-full h-16 animate-pulse flex border-b-[0.5px] border-text justify-between items-center p-8 text-text hover:bg-secondary cursor-pointer\" onclick=\"find_room('"+data.room_name+"')\">"
             +"<div class=\"h-fit w-fit\">"+data.room_name+"</div>"
             +"<div class=\"h-fit w-fit text-slate-500 text-sm\">"+data.last_message_timestamp+"</div>"
-            +"</td></tr>"
+            +"</div>"
         )
     });
     socket.on("error", function (){
@@ -73,26 +74,26 @@
                 for (var i=0; i<data.length; i++) {
                     if (data[i].room_id == room_id) {
                         $("#rooms").append(
-                            "<tr id='"+data[i].room_id+"' class=\"\"><td class=\"w-full h-16 border-y-[0.5px] border-text flex justify-between items-center p-8 text-text bg-slate-200 hover:bg-secondary cursor-pointer\" onclick=\"find_room('"+data[i].room_name+"')\">"
+                            "<div id='"+data[i].room_id+"' class=\"w-full h-16 flex border-b-[0.5px] border-text justify-between items-center p-8 text-text bg-slate-200 hover:bg-secondary cursor-pointer\" onclick=\"find_room('"+data[i].room_name+"')\">"
                             +"<div class=\"h-fit w-fit\">"+data[i].room_name+"</div>"
                             +"<div class=\"h-fit w-fit text-slate-500 text-sm\">"+data[i].last_message_timestamp+"</div>"
-                            +"</td></tr>"
+                            +"</div>"
                         )
                         continue;
                     }
                     $("#rooms").append(
-                        "<tr id='"+data[i].room_id+"' class=\"\"><td class=\"w-full h-16 border-y-[0.5px] border-text flex justify-between items-center p-8 text-text hover:bg-secondary cursor-pointer\" onclick=\"find_room('"+data[i].room_name+"')\">"
+                        "<div id='"+data[i].room_id+"' class=\"w-full h-16 flex border-b-[0.5px] border-text justify-between items-center p-8 text-text hover:bg-secondary cursor-pointer\" onclick=\"find_room('"+data[i].room_name+"')\">"
                         +"<div class=\"h-fit w-fit\">"+data[i].room_name+"</div>"
                         +"<div class=\"h-fit w-fit text-slate-500 text-sm\">"+data[i].last_message_timestamp+"</div>"
-                        +"</td></tr>"
+                        +"</div>"
                     )
                 }
                 if (temp_room_id && document.getElementById(temp_room_id) == null) {
                     $("#rooms").prepend(
-                        "<tr id='"+temp_room_id+"' class=\"\"><td class=\"w-full h-16 border-y-[0.5px] border-text flex justify-between items-center p-8 text-text bg-slate-200 hover:bg-secondary cursor-pointer\" onclick=\"find_room('"+temp_room_name+"')\">"
+                        "<div id='"+temp_room_id+"' class=\"w-full h-16 flex border-b-[0.5px] border-text justify-between items-center p-8 text-text bg-slate-200 hover:bg-secondary cursor-pointer\" onclick=\"find_room('"+temp_room_name+"')\">"
                         +"<div class=\"h-fit w-fit\">"+temp_room_name+"</div>"
                         +"<div class=\"h-fit w-fit text-slate-500 text-sm\"></div>"
-                        +"</td></tr>"
+                        +"</div>"
                     )
                 }
             },
