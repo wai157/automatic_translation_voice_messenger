@@ -50,8 +50,18 @@ def on_audio(data):
         with open(f"{filename}.wav", "rb") as f:
             original_voice = f.read()
         original_voice = list(original_voice)
-        original_text = "this is an original test sentence"
-        translated_text = "this is a translated test sentence"
+        url = "http://127.0.0.1:8080"
+        response = requests.post(
+            url,
+            files={'file': open(f"{filename}.wav", 'rb')},
+            params={"lang": src_lang},
+            timeout=15
+        )
+        if response.status_code == 200:
+            original_text = response.json()['original_text']
+            translated_text = response.json()['translated_text']
+        else:
+            raise Exception("Failed to get response from the server")
         audio = gTTS(text=translated_text, lang=tgt_lang, slow=False)
         audio.save(f"resp_{filename}.wav")
         with open(f"resp_{filename}.wav", "rb") as f:
@@ -100,23 +110,3 @@ def on_audio(data):
         if os.path.exists(f"resp_{filename}.webm"):
             os.remove(f"resp_{filename}.wav")
         emit("error")
-
-    # url = "http://127.0.0.1:8080"
-    # response = requests.post(
-    #     url,
-    #     files={'file': open(f"{filename}.wav", 'rb')},
-    #     params={"lang": src_lang},
-    #     timeout=15
-    # )
-    # # if os.path.exists(filename):
-    # # 	os.remove(filename)
-    # print(response.text)
-    # if response.status_code == 200:
-    #     text = response.json()['text']
-    #     print(text)
-    #     audio = gTTS(text=text, lang=tgt_lang, slow=False)
-    #     audio.save("audio.wav")
-    #     print("Playing audio...")
-    #     print("Audio ended")
-    # else:
-    #     print("Error")
