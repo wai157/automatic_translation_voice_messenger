@@ -1,3 +1,4 @@
+import logging.config
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 from flask_login import current_user
 from flask import current_app
@@ -8,29 +9,33 @@ import os
 import subprocess
 from datetime import datetime
 import json
+import logging
+
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger('root')
 
 socketio = SocketIO()
 
 @socketio.on("connect")
 def on_connect():
     join_room(current_user.username)
-    print("connected")
+    logger.info("connected")
     
 @socketio.on("disconnect")
 def on_disconnect():
-    print("disconnected")
+    logger.info("disconnected")
 
 @socketio.on("join")
 def on_join(data):
     room = data["room"]
     join_room(room)
-    print(current_user.username + " has entered room " + room)
+    logger.info(current_user.username + " has entered room " + room)
     
 @socketio.on("leave")
 def on_leave(data):
     room = data["room"]
     leave_room(room)
-    print(current_user.username + " has left room " + room)
+    logger.info(current_user.username + " has left room " + room)
     
 @socketio.on("audio")
 def on_audio(data):
@@ -103,7 +108,7 @@ def on_audio(data):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        print(e)
+        logger.exception(e)
         if os.path.exists(f"{filename}.webm"):
             os.remove(f"{filename}.webm")
         if os.path.exists(f"{filename}.wav"):

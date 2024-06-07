@@ -1,9 +1,14 @@
+import logging.config
 from flask import Blueprint, render_template, redirect, flash, url_for
 from flask_bcrypt import Bcrypt
 from flask_login import login_user, LoginManager, logout_user, login_required
 from routers.forms import LoginForm, RegisterForm
 from sqlalchemy.exc import IntegrityError
 from models import db, User, Room
+import logging
+
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger('root')
 
 router = Blueprint('authentication', __name__, url_prefix='/auth')
 
@@ -34,7 +39,7 @@ def login():
             else:
                 flash("Invalid Username or password!", "error")
         except Exception as e:
-            print(e)
+            logger.exception(e)
             flash(e, "error")
 
     return render_template("auth.html", form=form,)
@@ -65,7 +70,7 @@ def register():
             db.session.rollback()
             flash(f"User already exists!", "warning")
         except Exception as e:
-            print(e)
+            logger.exception(e)
             db.session.rollback()
             flash(f"An error occured!", "error")
         

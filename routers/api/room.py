@@ -1,7 +1,11 @@
-from flask import Blueprint, request, render_template, redirect, flash, url_for
+import logging.config
+from flask import Blueprint, request
 from flask_login import current_user, login_required
 from models import db, User, Room, ChatHistory
-from datetime import datetime
+import logging
+
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger('root')
 
 router = Blueprint('room', __name__, url_prefix='/rooms')
 
@@ -20,7 +24,7 @@ def get_rooms():
             } for room in response]
         return response
     except Exception as e:
-        print(e)
+        logger.exception(e)
         return "An error occurred!", 500
 
 @router.route("/find-room", methods=["GET"], strict_slashes=False)
@@ -59,5 +63,5 @@ def find_room():
         }
     except Exception as e:
         db.session.rollback()
-        print(e)
+        logger.exception(e)
         return "An error occurred!", 500
