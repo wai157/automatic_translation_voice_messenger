@@ -21,6 +21,7 @@ def load_user(user_id):
 
 @router.route("/login", methods=("GET", "POST"), strict_slashes=False)
 def login():
+    logout_user()
     form: LoginForm = LoginForm()
     if form.validate_on_submit():
         try:
@@ -42,6 +43,7 @@ def login():
 
 @router.route("/register", methods=("GET", "POST"), strict_slashes=False)
 def register():
+    logout_user()
     form: RegisterForm = RegisterForm()
     if form.validate_on_submit():
         try:
