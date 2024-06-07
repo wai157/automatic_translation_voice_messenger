@@ -4,7 +4,6 @@ from flask_login import login_user, LoginManager, logout_user, login_required
 from routers.forms import LoginForm, RegisterForm
 from sqlalchemy.exc import IntegrityError
 from models import db, User, Room
-from datetime import datetime
 
 router = Blueprint('authentication', __name__, url_prefix='/auth')
 

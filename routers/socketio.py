@@ -1,5 +1,6 @@
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 from flask_login import current_user
+from flask import current_app
 from models import db, ChatHistory, Room
 import requests
 from gtts import gTTS
@@ -50,7 +51,7 @@ def on_audio(data):
         with open(f"{filename}.wav", "rb") as f:
             original_voice = f.read()
         original_voice = list(original_voice)
-        url = "http://127.0.0.1:8080"
+        url = current_app.config["INFERENCE_API_URL"]
         response = requests.post(
             url,
             files={'file': open(f"{filename}.wav", 'rb')},
