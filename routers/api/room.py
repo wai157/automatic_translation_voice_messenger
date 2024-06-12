@@ -19,7 +19,7 @@ def get_rooms():
         response = [
             {
                 "room_id": room["room_id"],
-                "room_name": room["room_id"].replace(f"{current_user.username}", "", 1).strip("-"),
+                "room_name": room["room_id"].split('-')[1] if room["room_id"].split('-')[0] == current_user.username else room["room_id"].split('-')[0],
                 "last_message_timestamp": room["last_message_timestamp"]
             } for room in response]
         return response
